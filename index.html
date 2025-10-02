@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>닮고 싶은 친구 활동 가이드</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+
+        function FriendshipActivity() {
+          const [currentStep, setCurrentStep] = useState(0);
+          const [completedSteps, setCompletedSteps] = useState([]);
+
+          const steps = [
+            {
+              title: "준비",
+              icon: "👥",
+              color: "bg-blue-500",
+              content: [
+                {
+                  subtitle: "모둠 구성",
+                  description: "학생들이 모둠별 혹은 짝별로 '닮고 싶은 친구'를 고른다."
+                },
+                {
+                  subtitle: "교사 발문",
+                  description: "닮고 싶은 친구에게 가서, 그 친구의 어깨에 손을 얹고 줄을 서 보자.",
+                  isTeacherPrompt: true
+                }
+              ]
+            },
+            {
+              title: "진행",
+              icon: "💬",
+              color: "bg-green-500",
+              content: [
+                {
+                  subtitle: "순서대로 발표",
+                  description: "맨 뒤에서부터 차례대로 앞으로 나오며 말하기:"
+                },
+                {
+                  subtitle: "발표 문구",
+                  description: "내가 너에게 배우고 싶은 것은 ○○야.",
+                  isStudentPrompt: true
+                },
+                {
+                  subtitle: "동작",
+                  description: "말한 뒤 앞으로 가서 친구 어깨에 손을 얹는다."
+                }
+              ]
+            },
+            {
+              title: "마무리",
+              icon: "💜",
+              color: "bg-purple-500",
+              content: [
+                {
+                  subtitle: "활동의 의미",
+                  description: "한 줄로 연결된 모습이 서로 존중하고 연결된 공동체의 상징이 됨."
+                },
+                {
+                  subtitle: "교사 정리 발문",
+                  description: "우리는 이렇게 서로의 좋은 점을 배우며 닮아갈 수 있어요. 자연도 우리와 닮았듯, 친구들도 서로 닮아 있답니다.",
+                  isTeacherPrompt: true
+                }
+              ]
+            }
+          ];
+
+          const handleStepComplete = (stepIndex) => {
+            if (!completedSteps.includes(stepIndex)) {
+              setCompletedSteps([...completedSteps, stepIndex]);
+            }
+          };
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+              <div className="max-w-4xl mx-auto">
+                {/* 헤더 */}
+                <div className="text-center mb-8">
+                  <h1 className="text-4xl font-bold text-gray-800 mb-2">
+                    닮고 싶은 친구 활동
+                  </h1>
+                  <p className="text-gray-600">서로 존중하고 연결된 공동체 만들기</p>
+                </div>
+
+                {/* 진행 단계 표시 */}
+                <div className="flex justify-center items-center mb-8 gap-2 flex-wrap">
+                  {steps.map((step, index) => {
+                    const isActive = currentStep === index;
+                    const isCompleted = completedSteps.includes(index);
+                    
+                    return (
+                      <React.Fragment key={index}>
+                        <button
+                          onClick={() => setCurrentStep(index)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                            isActive
+                              ? 'bg-white shadow-lg scale-105'
+                              : 'bg-white/50 hover:bg-white/80'
+                          }`}
+                        >
+                          <div className={`p-2 rounded-full ${step.color} ${isActive ? 'text-white' : 'text-white/70'}`}>
+                            <span className="text-2xl">{isCompleted ? '✅' : step.icon}</span>
+                          </div>
+                          <span className={`font-medium ${isActive ? 'text-gray-800' : 'text-gray-600'}`}>
+                            {step.title}
+                          </span>
+                        </button>
+                        {index < steps.length - 1 && (
+                          <span className="text-gray-400 text-2xl hidden sm:inline">→</span>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+
+                {/* 현재 단계 카드 */}
+                <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className={`p-4 rounded-2xl ${steps[currentStep].color}`}>
+                      <span className="text-5xl">{steps[currentStep].icon}</span>
+                    </div>
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-800">
+                        {steps[currentStep].title}
+                      </h2>
+                      <p className="text-gray-500">Step {currentStep + 1} of {steps.length}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    {steps[currentStep].content.map((item, index) => (
+                      <div key={index} className={`p-5 rounded-xl ${
+                        item.isTeacherPrompt 
+                          ? 'bg-amber-50 border-2 border-amber-200' 
+                          : item.isStudentPrompt
+                          ? 'bg-green-50 border-2 border-green-200'
+                          : 'bg-gray-50'
+                      }`}>
+                        <h3 className="font-semibold text-lg text-gray-800 mb-2 flex items-center gap-2">
+                          {item.isTeacherPrompt && <span className="text-amber-600">👨‍🏫 교사 발문</span>}
+                          {item.isStudentPrompt && <span className="text-green-600">💬 학생 발표</span>}
+                          {!item.isTeacherPrompt && !item.isStudentPrompt && item.subtitle}
+                        </h3>
+                        <p className={`text-gray-700 leading-relaxed ${
+                          item.isTeacherPrompt || item.isStudentPrompt ? 'text-lg font-medium' : ''
+                        }`}>
+                          {item.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 단계 완료 버튼 */}
+                  <div className="mt-8 flex gap-4">
+                    {currentStep > 0 && (
+                      <button
+                        onClick={() => setCurrentStep(currentStep - 1)}
+                        className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors"
+                      >
+                        ← 이전 단계
+                      </button>
+                    )}
+                    {currentStep < steps.length - 1 ? (
+                      <button
+                        onClick={() => {
+                          handleStepComplete(currentStep);
+                          setCurrentStep(currentStep + 1);
+                        }}
+                        className={`flex-1 px-6 py-3 ${steps[currentStep].color} text-white rounded-lg font-medium hover:opacity-90 transition-opacity`}
+                      >
+                        다음 단계 →
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleStepComplete(currentStep)}
+                        className={`flex-1 px-6 py-3 ${
+                          completedSteps.includes(currentStep)
+                            ? 'bg-green-500 hover:bg-green-600'
+                            : steps[currentStep].color
+                        } text-white rounded-lg font-medium hover:opacity-90 transition-opacity`}
+                      >
+                        {completedSteps.includes(currentStep) ? '✓ 활동 완료!' : '활동 완료 체크'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 활동 팁 */}
+                <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+                  <h3 className="font-bold text-lg text-blue-800 mb-3">💡 활동 운영 팁</h3>
+                  <ul className="space-y-2 text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-1">•</span>
+                      <span>학생 수가 많을 경우 여러 줄로 나누어 진행할 수 있습니다.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-1">•</span>
+                      <span>발표가 어려운 학생은 속삭이거나 메모지로 전달할 수 있습니다.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-1">•</span>
+                      <span>활동 후 사진을 찍어 학급 공간에 게시하면 좋습니다.</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* 푸터 */}
+                <div className="text-center mt-8 text-gray-500 text-sm">
+                  <p>🌱 서로 배우고 성장하는 우리 교실 🌱</p>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<FriendshipActivity />);
+    </script>
+</body>
+</html>
